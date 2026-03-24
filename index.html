@@ -501,44 +501,38 @@
                 // Correct answer
                 correctStreak++;
                 
-                // Add fade-out animation
-                imageElement.classList.add('fade-out');
+                // Move to next level first
+                currentLevel++;
                 
-                // Delay loading next question
-                setTimeout(function() {
-                    // Move to next level first
-                    currentLevel++;
-                    
-                    // Create a new image element to preload the next image
-                    const preloadImage = new Image();
-                    const nextQuestion = randomQuestions[currentLevel];
-                    
-                    preloadImage.onload = function() {
-                        // Once the image is preloaded, set it to the image element
-                        imageElement.src = nextQuestion.image;
-                        // Remove fade-out class after a small delay to ensure the new image is displayed
-                        setTimeout(function() {
-                            imageElement.classList.remove('fade-out');
-                        }, 50);
-                    };
-                    
-                    preloadImage.onerror = function() {
-                        // If image fails to load, still update the source and remove fade-out class
-                        imageElement.src = nextQuestion.image;
-                        imageElement.classList.remove('fade-out');
-                    };
-                    
-                    // Start preloading the image
-                    preloadImage.src = nextQuestion.image;
+                // Create a new image element to preload the next image
+                const preloadImage = new Image();
+                const nextQuestion = randomQuestions[currentLevel];
+                
+                preloadImage.onload = function() {
+                    // Once the image is preloaded, update the image element immediately
+                    imageElement.src = nextQuestion.image;
                     
                     // For the last question, show success screen
                     if (currentLevel >= 10) {
-                        // Wait for the image to load before showing success screen
-                        setTimeout(function() {
-                            showSuccessScreen();
-                        }, 100);
+                        showSuccessScreen();
                     }
-                }, 500);
+                };
+                
+                preloadImage.onerror = function() {
+                    // If image fails to load, still update the source
+                    imageElement.src = nextQuestion.image;
+                    
+                    // For the last question, show success screen
+                    if (currentLevel >= 10) {
+                        showSuccessScreen();
+                    }
+                };
+                
+                // Start preloading the image
+                preloadImage.src = nextQuestion.image;
+                
+                // Update level progress immediately
+                document.getElementById('level-progress').textContent = 'Question ' + (currentLevel + 1) + '/10';
             } else {
                 // Wrong answer
                 correctStreak = 0; // Reset correct streak counter
