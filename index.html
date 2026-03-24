@@ -504,38 +504,34 @@
                 // Move to next level first
                 currentLevel++;
                 
-                // Clear the current image immediately to avoid showing previous image
-                imageElement.src = '';
-                
-                // Create a new image element to preload the next image
-                const preloadImage = new Image();
-                const nextQuestion = randomQuestions[currentLevel];
-                
-                preloadImage.onload = function() {
-                    // Once the image is preloaded, update the image element immediately
-                    imageElement.src = nextQuestion.image;
+                // Check if this is the last question
+                if (currentLevel >= 10) {
+                    // Show success screen directly
+                    showSuccessScreen();
+                } else {
+                    // Clear the current image immediately to avoid showing previous image
+                    imageElement.src = '';
                     
-                    // For the last question, show success screen
-                    if (currentLevel >= 10) {
-                        showSuccessScreen();
-                    }
-                };
-                
-                preloadImage.onerror = function() {
-                    // If image fails to load, still update the source
-                    imageElement.src = nextQuestion.image;
+                    // Create a new image element to preload the next image
+                    const preloadImage = new Image();
+                    const nextQuestion = randomQuestions[currentLevel];
                     
-                    // For the last question, show success screen
-                    if (currentLevel >= 10) {
-                        showSuccessScreen();
-                    }
-                };
-                
-                // Start preloading the image
-                preloadImage.src = nextQuestion.image;
-                
-                // Update level progress immediately
-                document.getElementById('level-progress').textContent = 'Question ' + (currentLevel + 1) + '/10';
+                    preloadImage.onload = function() {
+                        // Once the image is preloaded, update the image element immediately
+                        imageElement.src = nextQuestion.image;
+                    };
+                    
+                    preloadImage.onerror = function() {
+                        // If image fails to load, still update the source
+                        imageElement.src = nextQuestion.image;
+                    };
+                    
+                    // Start preloading the image
+                    preloadImage.src = nextQuestion.image;
+                    
+                    // Update level progress immediately
+                    document.getElementById('level-progress').textContent = 'Question ' + (currentLevel + 1) + '/10';
+                }
             } else {
                 // Wrong answer
                 correctStreak = 0; // Reset correct streak counter
