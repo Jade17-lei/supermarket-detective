@@ -500,6 +500,38 @@
             if (selectedColor === currentQuestion.answer) {
                 // Correct answer
                 correctStreak++;
+                
+                // Move to next level
+                currentLevel++;
+                
+                // Check if this is the last question (10th question)
+                if (currentLevel >= 10) {
+                    // Show success screen directly
+                    showSuccessScreen();
+                } else {
+                    // Clear the current image immediately to avoid showing previous image
+                    imageElement.src = '';
+                    
+                    // Create a new image element to preload the next image
+                    const preloadImage = new Image();
+                    const nextQuestion = randomQuestions[currentLevel];
+                    
+                    preloadImage.onload = function() {
+                        // Once the image is preloaded, update the image element immediately
+                        imageElement.src = nextQuestion.image;
+                    };
+                    
+                    preloadImage.onerror = function() {
+                        // If image fails to load, still update the source
+                        imageElement.src = nextQuestion.image;
+                    };
+                    
+                    // Start preloading the image
+                    preloadImage.src = nextQuestion.image;
+                    
+                    // Update level progress immediately
+                    document.getElementById('level-progress').textContent = 'Question ' + (currentLevel + 1) + '/10';
+                }
             } else {
                 // Wrong answer
                 correctStreak = 0; // Reset correct streak counter
@@ -508,38 +540,6 @@
                 let displayAnswer = currentQuestion.answer === 'Red' ? 'risk' : 'safe';
                 document.getElementById('correct-answer').textContent = 'The correct answer is: ' + displayAnswer;
                 document.getElementById('error-modal').style.display = 'block';
-            }
-            
-            // Move to next level regardless of answer
-            currentLevel++;
-            
-            // Check if this is the last question
-            if (currentLevel >= 10) {
-                // Show success screen directly
-                showSuccessScreen();
-            } else {
-                // Clear the current image immediately to avoid showing previous image
-                imageElement.src = '';
-                
-                // Create a new image element to preload the next image
-                const preloadImage = new Image();
-                const nextQuestion = randomQuestions[currentLevel];
-                
-                preloadImage.onload = function() {
-                    // Once the image is preloaded, update the image element immediately
-                    imageElement.src = nextQuestion.image;
-                };
-                
-                preloadImage.onerror = function() {
-                    // If image fails to load, still update the source
-                    imageElement.src = nextQuestion.image;
-                };
-                
-                // Start preloading the image
-                preloadImage.src = nextQuestion.image;
-                
-                // Update level progress immediately
-                document.getElementById('level-progress').textContent = 'Question ' + (currentLevel + 1) + '/10';
             }
         }
         
