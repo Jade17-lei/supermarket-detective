@@ -506,19 +506,46 @@
                 
                 // Delay loading next question
                 setTimeout(function() {
-                    // Reset image element
-                    imageElement.classList.remove('fade-out');
-                    
-                    // Move to next level
+                    // Move to next level first
                     currentLevel++;
-                    loadQuestion();
+                    
+                    // Create a new image element to preload the next image
+                    const preloadImage = new Image();
+                    const nextQuestion = randomQuestions[currentLevel];
+                    
+                    preloadImage.onload = function() {
+                        // Once the image is preloaded, set it to the image element
+                        imageElement.src = nextQuestion.image;
+                        // Remove fade-out class after a small delay to ensure the new image is displayed
+                        setTimeout(function() {
+                            imageElement.classList.remove('fade-out');
+                        }, 50);
+                    };
+                    
+                    preloadImage.onerror = function() {
+                        // If image fails to load, still update the source and remove fade-out class
+                        imageElement.src = nextQuestion.image;
+                        imageElement.classList.remove('fade-out');
+                    };
+                    
+                    // Start preloading the image
+                    preloadImage.src = nextQuestion.image;
+                    
+                    // For the last question, show success screen
+                    if (currentLevel >= 10) {
+                        // Wait for the image to load before showing success screen
+                        setTimeout(function() {
+                            showSuccessScreen();
+                        }, 100);
+                    }
                 }, 500);
             } else {
                 // Wrong answer
                 correctStreak = 0; // Reset correct streak counter
                 
                 // Show error modal with correct answer
-                document.getElementById('correct-answer').textContent = 'The correct answer is: ' + currentQuestion.answer;
+                let displayAnswer = currentQuestion.answer === 'Red' ? 'risk' : 'safe';
+                document.getElementById('correct-answer').textContent = 'The correct answer is: ' + displayAnswer;
                 document.getElementById('error-modal').style.display = 'block';
             }
         }
