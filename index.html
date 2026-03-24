@@ -504,6 +504,9 @@
                 // Move to next level first
                 currentLevel++;
                 
+                // Clear the current image immediately to avoid showing previous image
+                imageElement.src = '';
+                
                 // Create a new image element to preload the next image
                 const preloadImage = new Image();
                 const nextQuestion = randomQuestions[currentLevel];
